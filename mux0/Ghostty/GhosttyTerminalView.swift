@@ -90,6 +90,11 @@ final class GhosttyTerminalView: NSView, NSTextInputClient {
     /// inherited / last-known directory.
     var pwdStoreRef: TerminalPwdStore?
 
+    /// Injected by TabContentView. Fired on `mouseDown` so the owning tab can
+    /// update `WorkspaceStore.focusedTerminalId`. Cannot rely on the enclosing
+    /// SplitPaneView's `mouseDown` because this view consumes the event first.
+    var onFocus: (() -> Void)?
+
     /// Map from the opaque ghostty_surface_t pointer back to the owning view.
     /// The action callback only has a ghostty_target_s with the surface handle; this
     /// lookup is how we get back to Swift-land. Weak references so a freed surface
@@ -364,12 +369,21 @@ final class GhosttyTerminalView: NSView, NSTextInputClient {
         //   2. interpretKeyEvents 返回后，用一次 ghostty_surface_key 把 "文本 + 原始 keycode + 组字标志"
         //      一起交付给 ghostty，由 ghostty 自行决定是作为 binding 消费、作为文本写入 PTY，
         //      还是按 keycode 翻译成 C0 / 转义序列。
+        let hadMarkedTextBefore = hasMarkedText()
         insideKeyDown = true
         keyTextAccumulator = ""
         interpretKeyEvents([event])
         let committedText = keyTextAccumulator
         keyTextAccumulator = ""
         insideKeyDown = false
+
+        // IME 消费了本次按键的情况：之前在组字，按键后既没产生提交文本，组字状态也被清掉。
+        // 典型例子是在有 preedit 时按 Backspace 删掉最后一个拼音字符，或按 Esc 取消组字。
+        // 此时不能把原始 keycode 再交给 ghostty，否则 ghostty 会把 Backspace 当成真正的
+        // 退格发给 PTY，把前一个已提交的汉字也一起删掉。
+        if hadMarkedTextBefore && committedText.isEmpty && !hasMarkedText() {
+            return
+        }
 
         let action: ghostty_input_action_e = event.isARepeat ? GHOSTTY_ACTION_REPEAT : GHOSTTY_ACTION_PRESS
         let mods = modsFromEvent(event)
@@ -430,7 +444,9 @@ final class GhosttyTerminalView: NSView, NSTextInputClient {
     // MARK: - Mouse input
 
     override func mouseDown(with event: NSEvent) {
-        // Bring this surface to the foreground; SplitPaneView.onFocus handles store update.
+        // This view consumes the event before SplitPaneView sees it, so notify
+        // the owner here so `focusedTerminalId` tracks the actual user focus.
+        onFocus?()
         Self.makeFrontmost(self)
         window?.makeFirstResponder(self)
         guard let s = surface else { return }

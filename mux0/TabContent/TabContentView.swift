@@ -206,7 +206,16 @@ final class TabContentView: NSView {
                 // SplitPaneView is owned by TabContentView, so self cannot be nil while
                 // any SplitPaneView built by this instance is alive.
                 guard let self else { fatalError("TabContentView deallocated while SplitPaneView still active") }
-                return self.terminalViewFor(id: id)
+                let tv = self.terminalViewFor(id: id)
+                // Wire focus callback here (not in terminalViewFor) so we have
+                // tabId in scope; GhosttyTerminalView.mouseDown will invoke it
+                // to update WorkspaceStore.focusedTerminalId on direct click,
+                // because the terminal view consumes the event before SplitPaneView.
+                tv.onFocus = { [weak self] in
+                    guard let self, let wsId = self.store?.selectedId else { return }
+                    self.store?.updateFocusedTerminal(id: id, tabId: tabId, in: wsId)
+                }
+                return tv
             },
             onRatioChanged: { [weak self] splitId, ratio in
                 guard let self, let wsId = self.store?.selectedId else { return }
