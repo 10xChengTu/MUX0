@@ -295,7 +295,17 @@ jobs:
             chmod +x /tmp/sign_update
             SIGN=/tmp/sign_update
           fi
-          SIGNATURE=$("$SIGN" -f "$PRIV_PATH" "${{ steps.dmg.outputs.path }}" | awk '{print $1}')
+          # sign_update 输出形如：sparkle:edSignature="<base64>" length="<bytes>"
+          # 必须提取引号内的纯 base64；早先用 awk '{print $1}' 会把
+          # `sparkle:edSignature="<base64>"` 整段塞进 appcast，导致 Sparkle
+          # 校验失败弹「此更新未正确签名」。
+          SIGN_OUTPUT=$("$SIGN" -f "$PRIV_PATH" "${{ steps.dmg.outputs.path }}")
+          SIGNATURE=$(printf '%s' "$SIGN_OUTPUT" | sed -E 's/.*edSignature="([^"]+)".*/\1/')
+          if [ -z "$SIGNATURE" ] || [ "$SIGNATURE" = "$SIGN_OUTPUT" ]; then
+            echo "::error::Failed to parse EdDSA signature from sign_update output: $SIGN_OUTPUT"
+            rm -f "$PRIV_PATH"
+            exit 1
+          fi
           rm -f "$PRIV_PATH"
           echo "signature=$SIGNATURE" >> "$GITHUB_OUTPUT"
 
