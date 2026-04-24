@@ -269,6 +269,32 @@ final class TerminalStatusTests: XCTestCase {
         let inputs: [TerminalStatus] = [readSuccess, .needsInput(since: now)]
         XCTAssertEqual(TerminalStatus.aggregate(inputs).priorityCaseName, "needsInput")
     }
+
+    // MARK: - isRead
+
+    func testIsReadFalseForNonTerminalStates() {
+        let now = Date()
+        XCTAssertFalse(TerminalStatus.neverRan.isRead)
+        XCTAssertFalse(TerminalStatus.running(startedAt: now).isRead)
+        XCTAssertFalse(TerminalStatus.idle(since: now).isRead)
+        XCTAssertFalse(TerminalStatus.needsInput(since: now).isRead)
+    }
+
+    func testIsReadTrueOnlyWhenReadAtIsSet() {
+        let now = Date()
+        let unreadSuccess = TerminalStatus.success(exitCode: 0, duration: 1, finishedAt: now,
+                                                    agent: .claude)
+        let readSuccess   = TerminalStatus.success(exitCode: 0, duration: 1, finishedAt: now,
+                                                    agent: .claude, summary: nil, readAt: now)
+        let unreadFailed  = TerminalStatus.failed(exitCode: 1, duration: 1, finishedAt: now,
+                                                   agent: .claude)
+        let readFailed    = TerminalStatus.failed(exitCode: 1, duration: 1, finishedAt: now,
+                                                   agent: .claude, summary: nil, readAt: now)
+        XCTAssertFalse(unreadSuccess.isRead)
+        XCTAssertTrue(readSuccess.isRead)
+        XCTAssertFalse(unreadFailed.isRead)
+        XCTAssertTrue(readFailed.isRead)
+    }
 }
 
 private extension TerminalStatus {
