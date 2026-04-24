@@ -241,3 +241,37 @@ def test_dispatch_uses_terminal_id_when_no_session_id(tmp_path):
     agent_hook.dispatch("prompt", "claude", {}, "term5", sf, now)
     doc = agent_hook.load_sessions(sf)
     assert "term5" in doc["sessions"]
+
+
+def test_dispatch_posttool_emits_running(tmp_path):
+    sf = tmp_path / "sessions.json"
+    now = 6_000_000.0
+    agent_hook.dispatch("prompt", "claude",
+                        {"session_id": "s6"}, "term6", sf, now)
+    agent_hook.dispatch("pretool", "claude",
+                        {"session_id": "s6", "tool_name": "Edit",
+                         "tool_input": {"file_path": "/foo.swift"}},
+                        "term6", sf, now + 1)
+    # Clean posttool — emits running (no toolDetail / exitCode).
+    emit = agent_hook.dispatch("posttool", "claude",
+                                {"session_id": "s6",
+                                 "tool_response": {"is_error": False}},
+                                "term6", sf, now + 2)
+    assert emit == {"event": "running", "at": now + 2}
+
+
+def test_dispatch_posttool_running_emit_preserves_sticky_error(tmp_path):
+    sf = tmp_path / "sessions.json"
+    now = 7_000_000.0
+    agent_hook.dispatch("prompt", "claude",
+                        {"session_id": "s7"}, "term7", sf, now)
+    # Error posttool — still emits running AND sets the sticky flag.
+    emit = agent_hook.dispatch("posttool", "claude",
+                                {"session_id": "s7",
+                                 "tool_response": {"is_error": True}},
+                                "term7", sf, now + 1)
+    assert emit["event"] == "running"
+    # Stop reads the flag → exit code 1.
+    stop_emit = agent_hook.dispatch("stop", "claude",
+                                     {"session_id": "s7"}, "term7", sf, now + 2)
+    assert stop_emit["exitCode"] == 1

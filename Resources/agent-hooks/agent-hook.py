@@ -207,7 +207,10 @@ def dispatch(subcmd: str, agent: str, payload: dict,
         resp = payload.get("tool_response", {})
         if isinstance(resp, dict) and resp.get("is_error"):
             entry["turnHadError"] = True
-        # no emit
+        # Emit running so needsInput (set by Notification mid-turn) returns
+        # to the live-turn state after the user resolves a permission prompt.
+        # Stop fires later with a newer timestamp and overwrites to finished.
+        emit = {"event": "running", "at": now}
 
     elif subcmd == "stop":
         exit_code = 1 if entry.get("turnHadError") else 0
