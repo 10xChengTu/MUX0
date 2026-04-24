@@ -30,6 +30,12 @@ Agent turn 没有真实的 exit code，但 Claude Code / Codex 的 `PostToolUse`
 | OpenCode | 插件订阅 bus 事件（tool.execute.before / permission.asked / session.idle 等） | `opencode-plugin/mux0-status.js` |
 | Codex | 实验性 `hooks.json` + `notify` 兜底 | `codex-wrapper.sh` |
 
+## `running` 的覆盖点
+
+Claude / Codex 的 `PostToolUse` hook 除了累加 `turnHadError` 之外，还会 emit `running`。作用是把 `Notification → needsInput` 设置的等待态在用户批准权限、工具继续执行后推回 running——否则在"工具长时间执行"或"该工具是 turn 里最后一个动作"的情况下，橙点会一直卡到 `Stop` 才消失。`Stop` 的时间戳晚于 `posttool`，`TerminalStatusStore.isStale` 保证 `finished` 最终覆盖 `running`。
+
+OpenCode 走另一条路径：`permission.asked → needsInput`，`permission.replied → running`，plugin 层本身已闭环；`tool.execute.after` 不发 socket 消息，只累计 `turn.hadError`。
+
 ## `needsInput` 的派发门控
 
 Claude Code 的 `Notification` hook 本身是一个双重信号：**真实的权限请求**会触发它，同时**"已经 60 秒没动静"**的空闲心跳也会触发它（Claude Code 官方行为，不可区分）。如果无条件把 `Notification → needsInput`，一个成功结束的 turn 60 秒后就会被心跳误覆盖，让图标从 `success` 翻成 `needsInput`。
