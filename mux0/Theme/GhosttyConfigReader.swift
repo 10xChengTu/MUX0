@@ -19,14 +19,19 @@ enum GhosttyConfigReader {
         ]
     }
 
-    /// 默认主题搜索路径。
+    /// 默认主题搜索路径。用户自定义路径优先，bundle 内置主题（build-vendor.sh 打包）作为 fallback，
+    /// 确保 ~/.config/ghostty/themes/<Name> 能覆盖同名 bundle 主题。
     static var themeSearchPaths: [String] {
         let home = NSHomeDirectory()
-        return [
+        var paths: [String] = [
             "/Applications/Ghostty.app/Contents/Resources/ghostty/themes",
             "\(home)/Library/Application Support/com.mitchellh.ghostty/themes",
             "\(home)/.config/ghostty/themes",
         ]
+        if let base = Bundle.main.resourcePath {
+            paths.append((base as NSString).appendingPathComponent("ghostty/themes"))
+        }
+        return paths
     }
 
     /// 加载并解析当前用户的 ghostty 配置 + theme 文件 + mux0 override，返回组合后的颜色。
