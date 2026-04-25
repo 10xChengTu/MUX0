@@ -444,7 +444,6 @@ private final class WorkspaceRowItemView: NSView, NSTextFieldDelegate, NSDraggin
 
         let hPad = DT.Space.md
         let topPad = DT.Space.xs
-        let lineGap = DT.Space.xxs
         let titleH = ceil(titleLabel.intrinsicContentSize.height)
         let branchH = ceil(branchLabel.intrinsicContentSize.height)
 
@@ -481,43 +480,36 @@ private final class WorkspaceRowItemView: NSView, NSTextFieldDelegate, NSDraggin
                 width: prW, height: titleH)
         }
 
-        branchLabel.frame = NSRect(
-            x: hPad, y: topPad,
-            width: bounds.width - hPad * 2, height: branchH)
-
-        var nextY = titleFrame.minY - lineGap
+        // command 与 branch 互斥；唯一次标题紧贴 title 下方，构成"标题对"视觉单元
+        let pairGap = DT.Space.xs
         if !commandLabel.isHidden {
             let cmdH = commandLabelHeight(forWidth: bounds.width - hPad * 2)
             commandLabel.frame = NSRect(
                 x: hPad,
-                y: max(topPad, nextY - cmdH),
+                y: max(topPad, titleFrame.minY - pairGap - cmdH),
                 width: bounds.width - hPad * 2,
                 height: cmdH)
-            nextY = commandLabel.frame.minY - lineGap
-        }
-
-        if !branchLabel.isHidden, !commandLabel.isHidden {
+        } else if !branchLabel.isHidden {
             branchLabel.frame = NSRect(
                 x: hPad,
-                y: max(topPad, nextY - branchH),
+                y: max(topPad, titleFrame.minY - pairGap - branchH),
                 width: bounds.width - hPad * 2,
                 height: branchH)
         }
     }
 
     fileprivate func preferredHeight(forWidth width: CGFloat) -> CGFloat {
+        // 没有 default command 时只可能显示 branch（单行），baseRowHeight 已够
         guard workspace.defaultCommand?.isEmpty == false else {
             return WorkspaceListView.baseRowHeight
         }
 
         let contentWidth = max(0, width - DT.Space.md * 2)
         let titleH = ceil(titleLabel.intrinsicContentSize.height)
-        let branchH = branchLabel.isHidden ? 0 : ceil(branchLabel.intrinsicContentSize.height)
-        let branchGap = branchLabel.isHidden ? 0 : DT.Space.xxs
         let commandH = commandLabelHeight(forWidth: contentWidth)
         return max(
             WorkspaceListView.baseRowHeight,
-            DT.Space.xs + titleH + DT.Space.xxs + commandH + branchGap + branchH + DT.Space.xs)
+            DT.Space.xs + titleH + DT.Space.xs + commandH)
     }
 
     private func commandLabelHeight(forWidth width: CGFloat) -> CGFloat {
@@ -718,19 +710,21 @@ private final class WorkspaceRowItemView: NSView, NSTextFieldDelegate, NSDraggin
 
     private func updateContent() {
         titleLabel.stringValue = workspace.name
-        if let branch = metadata.gitBranch {
-            branchLabel.stringValue = "⎇ \(branch)"
-            branchLabel.isHidden = false
-        } else {
-            branchLabel.stringValue = ""
-            branchLabel.isHidden = true
-        }
-        if let cmd = workspace.defaultCommand, !cmd.isEmpty {
+        let hasCommand = (workspace.defaultCommand?.isEmpty == false)
+        if hasCommand, let cmd = workspace.defaultCommand {
             commandLabel.stringValue = "$ \(cmd)"
             commandLabel.isHidden = false
         } else {
             commandLabel.stringValue = ""
             commandLabel.isHidden = true
+        }
+        // 单一次标题位：有 default command 就让位给它，否则显示 branch
+        if !hasCommand, let branch = metadata.gitBranch {
+            branchLabel.stringValue = "⎇ \(branch)"
+            branchLabel.isHidden = false
+        } else {
+            branchLabel.stringValue = ""
+            branchLabel.isHidden = true
         }
         if let pr = metadata.prStatus {
             prBadge.stringValue = pr.uppercased()
