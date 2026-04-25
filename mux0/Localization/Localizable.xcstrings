@@ -4,8 +4,8 @@
     "app.ghostty.notFound.detail" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "MUX0 requires Ghostty to be installed.\nRun scripts/build-vendor.sh first, then relaunch." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "MUX0 需要安装 Ghostty。请先运行 scripts/build-vendor.sh，然后重新启动。" } }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Mux0 requires Ghostty to be installed.\nRun scripts/build-vendor.sh first, then relaunch." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "Mux0 需要安装 Ghostty。请先运行 scripts/build-vendor.sh，然后重新启动。" } }
       }
     },
     "app.ghostty.notFound.title" : {
@@ -53,8 +53,8 @@
     "menu.help" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "MUX0 Help" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "MUX0 帮助" } }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Mux0 Help" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "Mux0 帮助" } }
       }
     },
     "menu.newTab" : {
@@ -606,8 +606,8 @@
     "sidebar.title" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "MUX0" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "MUX0" } }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Mux0" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "Mux0" } }
       }
     },
     "tab.close.alert.cancel" : {

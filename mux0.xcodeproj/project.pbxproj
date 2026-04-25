@@ -129,6 +129,7 @@
 		6828870E05C9747F55C30BEE /* SettingsResetRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsResetRow.swift; sourceTree = "<group>"; };
 		6A963A750BA08BAAF5629075 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
 		6B95FF6C4289EE3D48831A08 /* BoundControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundControls.swift; sourceTree = "<group>"; };
+		6C02DE9F1EA5DB3D6EFBA311 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		6E9FA78211379FE745A2A306 /* UpdateUserDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateUserDriver.swift; sourceTree = "<group>"; };
 		6ECD49D2FB00996850D13632 /* TabBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBridge.swift; sourceTree = "<group>"; };
 		70BBA11237B9EA46D6D3FFD6 /* ThemeManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManagerTests.swift; sourceTree = "<group>"; };
@@ -137,7 +138,6 @@
 		81CD12FFB88B2BE6DFCE9F2A /* UpdateState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateState.swift; sourceTree = "<group>"; };
 		821BF7B943BBA8650E8769A4 /* TerminalPwdStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalPwdStoreTests.swift; sourceTree = "<group>"; };
 		829BFF63567D2305C599651B /* NotificationNamesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationNamesTests.swift; sourceTree = "<group>"; };
-		830B2ED6AC65D014EA0D7276 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		84326382AC1806C28810AF31 /* TabContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabContentView.swift; sourceTree = "<group>"; };
 		880E1BD0DC5DE3BD5E58FDAC /* WorkspaceListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceListView.swift; sourceTree = "<group>"; };
 		8C16FADC79038BF0D330E3B7 /* mux0.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mux0.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -215,15 +215,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		398EC5E5F6A5EC3699262CD6 /* MUX0 */ = {
-			isa = PBXGroup;
-			children = (
-				830B2ED6AC65D014EA0D7276 /* Config.xcconfig */,
-			);
-			name = MUX0;
-			path = .;
-			sourceTree = "<group>";
-		};
 		4F8B81D2162BAF843BC15DA4 /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -254,7 +245,7 @@
 			isa = PBXGroup;
 			children = (
 				8F879EC56F1D67764C5600D3 /* mux0 */,
-				398EC5E5F6A5EC3699262CD6 /* MUX0 */,
+				8ACE2B16A3A3CAFBED7A2D9D /* mux0 */,
 				AA4BB6C5568DC3C2B9738AAB /* mux0Tests */,
 				E888840EACC9BB25B4089E7E /* Frameworks */,
 				2FB96E5465A56EFDD3EE380E /* Products */,
@@ -316,6 +307,15 @@
 				FF8258EE99E420704586A50D /* WorkspaceMetadata.swift */,
 			);
 			path = Metadata;
+			sourceTree = "<group>";
+		};
+		8ACE2B16A3A3CAFBED7A2D9D /* mux0 */ = {
+			isa = PBXGroup;
+			children = (
+				6C02DE9F1EA5DB3D6EFBA311 /* Config.xcconfig */,
+			);
+			name = mux0;
+			path = .;
 			sourceTree = "<group>";
 		};
 		8F879EC56F1D67764C5600D3 /* mux0 */ = {
@@ -730,7 +730,7 @@
 		};
 		BED404A181C0A175EED09CF6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 830B2ED6AC65D014EA0D7276 /* Config.xcconfig */;
+			baseConfigurationReference = 6C02DE9F1EA5DB3D6EFBA311 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = mux0/mux0.entitlements;
@@ -743,8 +743,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Vendor/ghostty/lib";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.1.4;
-				MUX0_DISPLAY_NAME = MUX0;
+				MARKETING_VERSION = 0.2.1;
+				MUX0_DISPLAY_NAME = Mux0;
 				OTHER_LDFLAGS = "-lghostty -lc++ -framework Carbon";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mux0.app;
 				SDKROOT = macosx;
@@ -855,7 +855,7 @@
 		};
 		DEF80CCDBF9C05887D16217E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 830B2ED6AC65D014EA0D7276 /* Config.xcconfig */;
+			baseConfigurationReference = 6C02DE9F1EA5DB3D6EFBA311 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = mux0/mux0.entitlements;
@@ -868,8 +868,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/Vendor/ghostty/lib";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.1.4;
-				MUX0_DISPLAY_NAME = "MUX0 Dev";
+				MARKETING_VERSION = 0.2.1;
+				MUX0_DISPLAY_NAME = "Mux0 Dev";
 				OTHER_LDFLAGS = "-lghostty -lc++ -framework Carbon";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mux0.app.dev;
 				SDKROOT = macosx;

@@ -41,14 +41,14 @@ targets:
         SUEnableAutomaticChecks: YES
         SUScheduledCheckInterval: 86400
         ITSAppUsesNonExemptEncryption: NO
-        # TCC-protected folders — MUX0 hosts shells that may read/write anywhere
+        # TCC-protected folders — Mux0 hosts shells that may read/write anywhere
         # the user navigates. Declaring these keeps macOS from showing an
         # unstable generic prompt, and lets grants persist across rebuilds.
-        NSDocumentsFolderUsageDescription: "MUX0 needs access so terminal sessions can read and write files in your Documents folder."
-        NSDesktopFolderUsageDescription: "MUX0 needs access so terminal sessions can read and write files on your Desktop."
-        NSDownloadsFolderUsageDescription: "MUX0 needs access so terminal sessions can read and write files in your Downloads folder."
-        NSRemovableVolumesUsageDescription: "MUX0 needs access so terminal sessions can read and write files on removable volumes."
-        NSNetworkVolumesUsageDescription: "MUX0 needs access so terminal sessions can read and write files on mounted network volumes."
+        NSDocumentsFolderUsageDescription: "Mux0 needs access so terminal sessions can read and write files in your Documents folder."
+        NSDesktopFolderUsageDescription: "Mux0 needs access so terminal sessions can read and write files on your Desktop."
+        NSDownloadsFolderUsageDescription: "Mux0 needs access so terminal sessions can read and write files in your Downloads folder."
+        NSRemovableVolumesUsageDescription: "Mux0 needs access so terminal sessions can read and write files on removable volumes."
+        NSNetworkVolumesUsageDescription: "Mux0 needs access so terminal sessions can read and write files on mounted network volumes."
     postBuildScripts:
       - name: Copy ghostty resources
         script: |
@@ -126,10 +126,10 @@ targets:
         # 装的正式版本可以并存、互不踩授权记录。
         Debug:
           PRODUCT_BUNDLE_IDENTIFIER: com.mux0.app.dev
-          MUX0_DISPLAY_NAME: MUX0 Dev
+          MUX0_DISPLAY_NAME: Mux0 Dev
         Release:
           PRODUCT_BUNDLE_IDENTIFIER: com.mux0.app
-          MUX0_DISPLAY_NAME: MUX0
+          MUX0_DISPLAY_NAME: Mux0
     dependencies:
       - sdk: Metal.framework
       - sdk: QuartzCore.framework
