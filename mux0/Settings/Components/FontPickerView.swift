@@ -10,10 +10,15 @@ struct FontPickerView: View {
     @State private var isCustom: Bool = false
     @Environment(\.locale) private var locale
 
-    /// 系统等宽字体列表（首次访问缓存）。
+    /// 系统等宽字体族名列表（首次访问缓存）。
+    /// `availableFontNames(with:)` 返回 PostScript 名称（如 Menlo-Regular），
+    /// 但 ghostty 的 font-family 期望字体族名（如 Menlo），所以这里去重取 familyName。
     private static let systemMonospaceFonts: [String] = {
-        (NSFontManager.shared.availableFontNames(with: .fixedPitchFontMask) ?? [])
-            .sorted()
+        let names = NSFontManager.shared.availableFontNames(with: .fixedPitchFontMask) ?? []
+        let families = Set(names.compactMap { name -> String? in
+            NSFont(name: name, size: 12)?.familyName
+        })
+        return families.sorted()
     }()
 
     var body: some View {
