@@ -171,13 +171,21 @@ def _default_entry(agent: str, terminal_id: str) -> dict:
 def resume_command_for(agent: str, session_id: str) -> str:
     """Build the user-facing CLI command that resumes the given session.
     Empty string if the session id is missing/malformed, or if we don't
-    have a stable resume invocation for the agent (e.g. opencode in v1)."""
+    have a stable resume invocation for the agent.
+
+    Note: opencode does not actually flow through this Python hook (it has
+    its own JS plugin that emits resumeCommand directly), but we keep its
+    branch here so this function stays the single source of truth for the
+    CLI shape of every supported agent.
+    """
     if not session_id or not SESSION_ID_RE.match(session_id):
         return ""
     if agent == "claude":
         return f"claude --resume {session_id}"
     if agent == "codex":
         return f"codex resume {session_id}"
+    if agent == "opencode":
+        return f"opencode --session {session_id}"
     return ""
 
 

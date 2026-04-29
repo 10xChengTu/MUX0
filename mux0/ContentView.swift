@@ -71,6 +71,7 @@ struct ContentView: View {
                         store: store,
                         statusStore: statusStore,
                         pwdStore: pwdStore,
+                        settings: settingsStore,
                         theme: themeManager.theme,
                         backgroundOpacity: contentBg,
                         showStatusIndicators: showStatusIndicators,
@@ -84,6 +85,7 @@ struct ContentView: View {
                             theme: themeManager.theme,
                             settings: settingsStore,
                             updateStore: updateStore,
+                            workspaceStore: store,
                             initialSection: pendingSettingsSection,
                             onClose: { showSettings = false }
                         )
@@ -300,4 +302,12 @@ extension Notification.Name {
     // Settings
     static let mux0OpenSettings         = Notification.Name("mux0.openSettings")
     static let mux0EditConfigFile       = Notification.Name("mux0.editConfigFile")
+
+    /// Posted by the Agents → Notifications → Codex toggle when the user
+    /// flips it ON, so the section view can present its experimental-flag
+    /// alert. Routed via NotificationCenter (instead of an `onTurnOn`
+    /// parameter) so every row in the ForEach has an identical view
+    /// signature — Form(.grouped) splits a row out into its own card if
+    /// any neighbour differs.
+    static let mux0CodexHookAlert       = Notification.Name("mux0.codexHookAlert")
 }

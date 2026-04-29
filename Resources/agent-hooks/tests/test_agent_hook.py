@@ -291,9 +291,14 @@ def test_resume_command_for_codex():
     assert agent_hook.resume_command_for("codex", "xyz") == "codex resume xyz"
 
 
+def test_resume_command_for_opencode():
+    assert agent_hook.resume_command_for("opencode", "ses_abc") == \
+           "opencode --session ses_abc"
+
+
 def test_resume_command_for_unknown_agent():
-    # OpenCode (and any future agent) returns empty until we know its CLI shape.
-    assert agent_hook.resume_command_for("opencode", "xyz") == ""
+    # Any future agent returns empty until we know its CLI shape.
+    assert agent_hook.resume_command_for("aider", "xyz") == ""
 
 
 def test_resume_command_for_empty_session():

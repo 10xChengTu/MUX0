@@ -17,10 +17,14 @@ enum HookDispatcher {
                          settings: SettingsConfigStore,
                          store: TerminalStatusStore,
                          workspaceStore: WorkspaceStore? = nil) {
-        guard settings.get(msg.agent.settingsKey) == "true" else { return }
-        if let cmd = msg.resumeCommand, let ws = workspaceStore {
+        // Resume is gated independently from the status (notifications)
+        // toggle: a user who only wants auto-resume but doesn't want the
+        // running/idle icons should still get their session id persisted.
+        if let cmd = msg.resumeCommand, let ws = workspaceStore,
+           settings.get(msg.agent.resumeSettingsKey) == "true" {
             ws.recordResumeCommand(terminalId: msg.terminalId, command: cmd)
         }
+        guard settings.get(msg.agent.settingsKey) == "true" else { return }
         switch msg.event {
         case .running:
             store.setRunning(terminalId: msg.terminalId,

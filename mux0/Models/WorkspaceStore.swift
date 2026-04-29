@@ -242,6 +242,24 @@ final class WorkspaceStore {
         return workspaces[wsIdx].pendingPrefills[terminalId.uuidString]
     }
 
+    /// Drop every stored resume command for the given agent. Called when the
+    /// user turns the Resume toggle off, so the change takes effect on next
+    /// launch instead of waiting for the stale entry to be overwritten.
+    func clearResumePrefills(forAgent agent: HookMessage.Agent) {
+        guard agent.supportsResume else { return }
+        var changed = false
+        for i in workspaces.indices {
+            let kept = workspaces[i].pendingPrefills.filter {
+                HookMessage.Agent.fromResumeCommand($0.value) != agent
+            }
+            if kept.count != workspaces[i].pendingPrefills.count {
+                workspaces[i].pendingPrefills = kept
+                changed = true
+            }
+        }
+        if changed { save() }
+    }
+
     // MARK: - Helpers
 
     private func makeNewTab(index: Int) -> TerminalTab {

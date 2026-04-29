@@ -579,6 +579,52 @@ final class WorkspaceStoreTests: XCTestCase {
                        "claude --resume two")
     }
 
+    func testClearResumePrefillsForClaudeKeepsCodexEntries() {
+        // Clearing one agent's stored resume commands must not touch the
+        // other's — users may turn off claude's auto-resume while still
+        // wanting codex's to fire.
+        let store = WorkspaceStore(persistenceKey: "test-\(UUID())")
+        store.createWorkspace(name: "p")
+        let wsId = store.workspaces[0].id
+        let tabId = store.workspaces[0].tabs[0].id
+        let term1 = firstTerminalId(store)
+        guard let term2 = store.splitTerminal(id: term1, in: wsId, tabId: tabId,
+                                              direction: .vertical) else {
+            return XCTFail("split failed")
+        }
+        store.recordResumeCommand(terminalId: term1, command: "claude --resume one")
+        store.recordResumeCommand(terminalId: term2, command: "codex resume two")
+
+        store.clearResumePrefills(forAgent: .claude)
+
+        XCTAssertNil(store.workspaces[0].pendingPrefills[term1.uuidString])
+        XCTAssertEqual(store.workspaces[0].pendingPrefills[term2.uuidString],
+                       "codex resume two")
+    }
+
+    func testClearResumePrefillsForOpencodeKeepsClaude() {
+        // OpenCode has its own resume CLI (`opencode --session <id>`). The
+        // clear-by-agent helper must drop ONLY opencode entries, leaving
+        // claude/codex stored values alone.
+        let store = WorkspaceStore(persistenceKey: "test-\(UUID())")
+        store.createWorkspace(name: "p")
+        let wsId = store.workspaces[0].id
+        let tabId = store.workspaces[0].tabs[0].id
+        let term1 = firstTerminalId(store)
+        guard let term2 = store.splitTerminal(id: term1, in: wsId, tabId: tabId,
+                                              direction: .vertical) else {
+            return XCTFail("split failed")
+        }
+        store.recordResumeCommand(terminalId: term1, command: "claude --resume keep")
+        store.recordResumeCommand(terminalId: term2, command: "opencode --session drop")
+
+        store.clearResumePrefills(forAgent: .opencode)
+
+        XCTAssertEqual(store.workspaces[0].pendingPrefills[term1.uuidString],
+                       "claude --resume keep")
+        XCTAssertNil(store.workspaces[0].pendingPrefills[term2.uuidString])
+    }
+
     func testRemoveTabDropsAllItsTerminalsPendingPrefills() {
         let store = WorkspaceStore(persistenceKey: "test-\(UUID())")
         store.createWorkspace(name: "p")
