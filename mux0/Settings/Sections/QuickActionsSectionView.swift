@@ -53,7 +53,19 @@ struct QuickActionsSectionView: View {
                 .buttonStyle(.borderless)
             }
 
-            SettingsResetRow(settings: settings, keys: managedKeys)
+            SettingsResetRow(
+                settings: settings,
+                keys: managedKeys,
+                additionalAction: {
+                    // SettingsResetRow only wipes the on-disk keys; the
+                    // @Observable QuickActionsStore still holds the old
+                    // arrays in memory. Reload so the top-bar buttons,
+                    // Settings list, and command resolution all snap to
+                    // the cleared state immediately instead of waiting
+                    // for the next app launch.
+                    quickActionsStore.reloadFromSettings()
+                }
+            )
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
