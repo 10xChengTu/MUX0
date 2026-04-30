@@ -97,10 +97,17 @@ final class WorkspaceStore {
     // MARK: - Tab CRUD
 
     @discardableResult
-    func addTab(to workspaceId: UUID) -> (tabId: UUID, terminalId: UUID)? {
+    func addTab(to workspaceId: UUID, kind: TabKind? = nil) -> (tabId: UUID, terminalId: UUID)? {
         guard let wsIdx = wsIndex(workspaceId) else { return nil }
         let index = workspaces[wsIdx].tabs.count + 1
-        let tab = makeNewTab(index: index)
+        let title: String
+        switch kind {
+        case .git:  title = "Git"
+        case .none: title = "terminal \(index)"
+        }
+        var tab = makeNewTab(index: index)
+        tab.title = title
+        tab.kind = kind
         workspaces[wsIdx].tabs.append(tab)
         workspaces[wsIdx].selectedTabId = tab.id
         save()
@@ -146,6 +153,44 @@ final class WorkspaceStore {
               workspaces[wsIdx].tabs[tIdx].title != trimmed else { return }
         workspaces[wsIdx].tabs[tIdx].title = trimmed
         save()
+    }
+
+    /// 保证给定 workspace 至少有一个 `kind == .git` 的 tab，并切到它。
+    ///
+    /// - 如果已经存在：仅 `selectTab`，不改 tabs 数组。
+    /// - 如果不存在：调 `addTab(to:kind: .git)` 创建并切。
+    ///
+    /// `sourcePwdTerminalId` = 调用此方法 *之前* selected tab 的 focusedTerminalId，
+    /// 由调用方用于 `TerminalPwdStore.inherit(from:to:)`，让 lazygit 落地在
+    /// 用户当下浏览的仓库 pwd。必须在 `selectTab` 切换之前 capture，否则之后
+    /// 取到的就是新 git tab 自身的终端，pwd 继承变成自我赋值。
+    @discardableResult
+    func ensureGitTab(in workspaceId: UUID) -> (
+        tabId: UUID,
+        terminalId: UUID,
+        isNew: Bool,
+        sourcePwdTerminalId: UUID?
+    ) {
+        guard let wsIdx = wsIndex(workspaceId) else {
+            return (UUID(), UUID(), false, nil)
+        }
+        // Capture before any mutation.
+        let sourcePwdTerminalId: UUID? = {
+            guard let selId = workspaces[wsIdx].selectedTabId,
+                  let selTab = workspaces[wsIdx].tabs.first(where: { $0.id == selId })
+            else { return nil }
+            return selTab.focusedTerminalId
+        }()
+
+        if let existing = workspaces[wsIdx].tabs.first(where: { $0.kind == .git }) {
+            selectTab(id: existing.id, in: workspaceId)
+            return (existing.id, existing.focusedTerminalId, false, sourcePwdTerminalId)
+        }
+
+        guard let created = addTab(to: workspaceId, kind: .git) else {
+            return (UUID(), UUID(), false, sourcePwdTerminalId)
+        }
+        return (created.tabId, created.terminalId, true, sourcePwdTerminalId)
     }
 
     // MARK: - Split operations

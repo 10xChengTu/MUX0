@@ -692,4 +692,81 @@ final class WorkspaceStoreTests: XCTestCase {
         XCTAssertEqual(decoded.title, "old tab")
         XCTAssertEqual(decoded.id, tabId)
     }
+
+    func testEnsureGitTab_createsNewWhenAbsent() {
+        let store = WorkspaceStore(persistenceKey: "test-\(UUID())")
+        store.createWorkspace(name: "ws")
+        let wsId = store.workspaces[0].id
+        let tabsBefore = store.workspaces[0].tabs.count
+
+        let result = store.ensureGitTab(in: wsId)
+
+        XCTAssertTrue(result.isNew)
+        XCTAssertEqual(store.workspaces[0].tabs.count, tabsBefore + 1)
+        XCTAssertEqual(store.workspaces[0].selectedTabId, result.tabId)
+        let newTab = store.workspaces[0].tabs.first(where: { $0.id == result.tabId })
+        XCTAssertEqual(newTab?.kind, .git)
+        XCTAssertEqual(newTab?.title, "Git")
+        XCTAssertEqual(newTab?.layout.allTerminalIds().first, result.terminalId)
+    }
+
+    func testEnsureGitTab_reusesWhenPresent() {
+        let store = WorkspaceStore(persistenceKey: "test-\(UUID())")
+        store.createWorkspace(name: "ws")
+        let wsId = store.workspaces[0].id
+        let firstResult = store.ensureGitTab(in: wsId)
+        let tabsAfterFirst = store.workspaces[0].tabs.count
+
+        // Switch focus away from the git tab, then re-invoke
+        let originalTabId = store.workspaces[0].tabs[0].id
+        store.selectTab(id: originalTabId, in: wsId)
+
+        let secondResult = store.ensureGitTab(in: wsId)
+
+        XCTAssertFalse(secondResult.isNew)
+        XCTAssertEqual(secondResult.tabId, firstResult.tabId)
+        XCTAssertEqual(store.workspaces[0].tabs.count, tabsAfterFirst)  // no new tab created
+        XCTAssertEqual(store.workspaces[0].selectedTabId, firstResult.tabId)  // selection moved back
+    }
+
+    func testEnsureGitTab_returnsSourcePwdTerminalIdFromPreviouslyFocusedTab() {
+        let store = WorkspaceStore(persistenceKey: "test-\(UUID())")
+        store.createWorkspace(name: "ws")
+        let wsId = store.workspaces[0].id
+        // The auto-created tab from createWorkspace has one terminal — capture its id.
+        let originalTab = store.workspaces[0].tabs[0]
+        let originalTermId = originalTab.layout.allTerminalIds()[0]
+        XCTAssertEqual(store.workspaces[0].selectedTabId, originalTab.id)
+
+        let result = store.ensureGitTab(in: wsId)
+
+        // Source = focused terminal of the tab that was selected BEFORE we switched.
+        XCTAssertEqual(result.sourcePwdTerminalId, originalTermId)
+    }
+
+    func testEnsureGitTab_reuseScenarioStillReportsSourcePwdTerminalId() {
+        let store = WorkspaceStore(persistenceKey: "test-\(UUID())")
+        store.createWorkspace(name: "ws")
+        let wsId = store.workspaces[0].id
+        _ = store.ensureGitTab(in: wsId)  // create
+        let nonGit = store.workspaces[0].tabs.first(where: { $0.kind == nil })!
+        store.selectTab(id: nonGit.id, in: wsId)
+        let nonGitTermId = nonGit.layout.allTerminalIds()[0]
+
+        let result = store.ensureGitTab(in: wsId)
+
+        XCTAssertFalse(result.isNew)
+        XCTAssertEqual(result.sourcePwdTerminalId, nonGitTermId)
+    }
+
+    func testEnsureGitTab_unknownWorkspaceReturnsNoOp() {
+        let store = WorkspaceStore(persistenceKey: "test-\(UUID())")
+        store.createWorkspace(name: "ws")
+
+        // Calling on an unknown workspace must not crash and must not mutate anything.
+        let tabsBefore = store.workspaces[0].tabs.count
+        _ = store.ensureGitTab(in: UUID())
+
+        XCTAssertEqual(store.workspaces[0].tabs.count, tabsBefore)
+    }
 }
