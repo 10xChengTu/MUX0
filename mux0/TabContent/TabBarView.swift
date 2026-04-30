@@ -601,14 +601,20 @@ private final class TabItemView: NSView, NSTextFieldDelegate, NSDraggingSource {
     }
 
     private func snapshotForDragging() -> (image: NSImage, frame: NSRect) {
-        guard let rep = bitmapImageRepForCachingDisplay(in: bounds) else {
-            return (NSImage(), bounds)
+        // 抓 pillView 区域而非整个 bounds —— TabItemView.bounds 比 pillView 多了
+        // 上下各 pillInset(=3pt) 的留白，当作 ghost 内容会让 compose 用 pillRadius
+        // 裁出来的圆角矩形顶部 / 底部各多 3pt 透明带，视觉上像内容被挤在中间。
+        // 截 pillView 的 frame 同时保留所有 sibling 子视图（kindIcon / titleLabel /
+        // statusIcon）—— cacheDisplay 会把所有与该 rect 相交的子视图一并渲染。
+        let pillFrame = pillView.frame
+        guard let rep = bitmapImageRepForCachingDisplay(in: pillFrame) else {
+            return (NSImage(), pillFrame)
         }
-        cacheDisplay(in: bounds, to: rep)
-        let raw = NSImage(size: bounds.size)
+        cacheDisplay(in: pillFrame, to: rep)
+        let raw = NSImage(size: pillFrame.size)
         raw.addRepresentation(rep)
         return DraggedSnapshotShadow.compose(content: raw,
-                                             contentSize: bounds.size,
+                                             contentSize: pillFrame.size,
                                              cornerRadius: TabBarView.pillRadius)
     }
 
