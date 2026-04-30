@@ -188,7 +188,11 @@ final class WorkspaceStore {
         }
 
         guard let created = addTab(to: workspaceId, kind: .git) else {
-            return (UUID(), UUID(), false, sourcePwdTerminalId)
+            // Unreachable: wsIndex(workspaceId) succeeded above, and addTab only
+            // fails when wsIndex returns nil. Surface in debug if the invariant
+            // ever breaks, but never leak misleading sourcePwd back to callers.
+            assertionFailure("addTab failed despite validated workspaceId — invariant broken")
+            return (UUID(), UUID(), false, nil)
         }
         return (created.tabId, created.terminalId, true, sourcePwdTerminalId)
     }

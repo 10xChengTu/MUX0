@@ -764,9 +764,13 @@ final class WorkspaceStoreTests: XCTestCase {
         store.createWorkspace(name: "ws")
 
         // Calling on an unknown workspace must not crash and must not mutate anything.
+        // Locks the sentinel-tuple contract: isNew=false and sourcePwdTerminalId=nil
+        // so future regressions toward "unknown ws creates a tab" are caught.
         let tabsBefore = store.workspaces[0].tabs.count
-        _ = store.ensureGitTab(in: UUID())
+        let result = store.ensureGitTab(in: UUID())
 
         XCTAssertEqual(store.workspaces[0].tabs.count, tabsBefore)
+        XCTAssertFalse(result.isNew)
+        XCTAssertNil(result.sourcePwdTerminalId)
     }
 }
