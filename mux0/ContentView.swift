@@ -120,6 +120,11 @@ struct ContentView: View {
             sidebarToggleButton
                 .padding(.leading, sidebarToggleLeading)
                 .padding(.top, DT.Space.xs)
+
+            gitTabButton
+                .frame(maxWidth: .infinity, alignment: .topTrailing)
+                .padding(.trailing, cardInset + DT.Space.xs)
+                .padding(.top, DT.Space.xs)
         }
         .frame(minWidth: 960, minHeight: 620)
         // 根背景用 sidebar 色作为窗口底色 —— sidebar 区不再额外叠一层，整个
@@ -275,6 +280,24 @@ struct ContentView: View {
                 .font(.system(size: 13, weight: .regular))
                 .foregroundColor(Color(themeManager.theme.textSecondary))
         }
+    }
+
+    private var gitTabButton: some View {
+        IconButton(
+            theme: themeManager.theme,
+            help: String(localized: L10n.Topbar.gitButtonTooltip.withLocale(locale))
+        ) {
+            guard let wsId = store.selectedId else { return }
+            let result = store.ensureGitTab(in: wsId)
+            if result.isNew, let prev = result.sourcePwdTerminalId {
+                pwdStore.inherit(from: prev, to: result.terminalId)
+            }
+        } label: {
+            Image(systemName: "arrow.triangle.branch")
+                .font(.system(size: 13, weight: .regular))
+                .foregroundColor(Color(themeManager.theme.textSecondary))
+        }
+        .disabled(store.selectedId == nil)
     }
 }
 
