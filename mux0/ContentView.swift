@@ -5,14 +5,8 @@ struct ContentView: View {
     @State private var store = WorkspaceStore()
     @State private var statusStore = TerminalStatusStore()
     @State private var pwdStore = TerminalPwdStore()
-    @State private var settingsStore = SettingsConfigStore()
-    /// Lazy because QuickActionsStore depends on `settingsStore` being
-    /// initialized first (it reads from settings during `init`). SwiftUI
-    /// `@State` evaluates initial expressions at struct-init time, before
-    /// `settingsStore` has loaded — so we materialize the store on first
-    /// `.onAppear` and pass a transient fallback to `TabBridge` for the
-    /// initial body pass (the fallback init is cheap, just 3 settings reads).
-    @State private var quickActionsStore: QuickActionsStore? = nil
+    @State private var settingsStore: SettingsConfigStore
+    @State private var quickActionsStore: QuickActionsStore
     @State private var sidebarCollapsed: Bool = false
     @State private var showSettings: Bool = false
     @State private var hookListener: HookSocketListener?
@@ -24,6 +18,12 @@ struct ContentView: View {
     @Environment(ThemeManager.self) private var themeManager
     @Environment(LanguageStore.self) private var languageStore
     @Environment(\.locale) private var locale
+
+    init() {
+        let settings = SettingsConfigStore()
+        self._settingsStore = State(initialValue: settings)
+        self._quickActionsStore = State(initialValue: QuickActionsStore(settings: settings))
+    }
 
     private let trafficLightInset: CGFloat = 28
     private let cardInset: CGFloat = 8
@@ -79,7 +79,7 @@ struct ContentView: View {
                         statusStore: statusStore,
                         pwdStore: pwdStore,
                         settings: settingsStore,
-                        quickActionsStore: quickActionsStore ?? QuickActionsStore(settings: settingsStore),
+                        quickActionsStore: quickActionsStore,
                         theme: themeManager.theme,
                         backgroundOpacity: contentBg,
                         showStatusIndicators: showStatusIndicators,
@@ -157,9 +157,6 @@ struct ContentView: View {
         // 会跟主题一致。不影响 sidebar/tab bar —— 它们本来就读 theme token。
         .preferredColorScheme(themeManager.theme.isDark ? .dark : .light)
         .onAppear {
-            if quickActionsStore == nil {
-                quickActionsStore = QuickActionsStore(settings: settingsStore)
-            }
             themeManager.loadFromGhosttyConfig()
             // ghostty 的 PWD action（OSC 7）回调在 main 上通知 pwdStore，sidebar
             // 的 MetadataRefresher 每 5s tick 从 pwdStore 读最新 cwd 跑 git。
@@ -299,8 +296,7 @@ struct ContentView: View {
             help: String(localized: L10n.Topbar.gitButtonTooltip.withLocale(locale))
         ) {
             guard let wsId = store.selectedId else { return }
-            let actions = quickActionsStore ?? QuickActionsStore(settings: settingsStore)
-            let title = actions.displayName(for: "lazygit", locale: locale)
+            let title = quickActionsStore.displayName(for: "lazygit", locale: locale)
             let result = store.ensureQuickActionTab(id: "lazygit", title: title, in: wsId)
             if result.isNew, let prev = result.sourcePwdTerminalId {
                 pwdStore.inherit(from: prev, to: result.terminalId)
