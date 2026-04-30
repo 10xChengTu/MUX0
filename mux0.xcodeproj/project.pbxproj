@@ -89,6 +89,7 @@
 		D795617034323AC803958EEE /* StatusIndicatorGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC7EFDC8D28B1681B068CE01 /* StatusIndicatorGateTests.swift */; };
 		DB016E38F7C00CC8547F99A6 /* ThemeManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70BBA11237B9EA46D6D3FFD6 /* ThemeManagerTests.swift */; };
 		DB838A8F31BA5F87C13A1CC3 /* SurfaceScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DEC02C6A3912B9FFA44F2E2 /* SurfaceScrollView.swift */; };
+		DFBA414A23A2A1292823B9BD /* QuickActionRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D473C2B5155F879CB722E99 /* QuickActionRowView.swift */; };
 		E6886E495DDD8BDB339CE580 /* HookSocketListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C6368E8FB6C5EF64A42FE9 /* HookSocketListener.swift */; };
 		E6A83ACBA029F2FB9A23D28B /* GhosttyConfigReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58750DF02302B3749F21937 /* GhosttyConfigReader.swift */; };
 		E782EA09EC9A5EBA151DD567 /* WorkspaceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF17311B1358A9ECB083D3A4 /* WorkspaceStore.swift */; };
@@ -121,6 +122,7 @@
 		270B3174ED3DA6C12E9A0B49 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		2794897A7761B77AEFEC405F /* TextLinkButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextLinkButton.swift; sourceTree = "<group>"; };
 		2C43A714AAB5B2FF59F5C935 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		2D473C2B5155F879CB722E99 /* QuickActionRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickActionRowView.swift; sourceTree = "<group>"; };
 		329B3C0C78516F3042BBBBA2 /* WindowAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowAccessor.swift; sourceTree = "<group>"; };
 		338C0567AF90216CCF64CB84 /* LanguageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageStore.swift; sourceTree = "<group>"; };
 		399D6E84F70926B48FDB254D /* HookMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HookMessageTests.swift; sourceTree = "<group>"; };
@@ -235,6 +237,7 @@
 				6B95FF6C4289EE3D48831A08 /* BoundControls.swift */,
 				C00418F118F44EEF00CFBDE8 /* FontPickerView.swift */,
 				4FDF42AF7F6C7FA8512527BF /* QuickActionIconView.swift */,
+				2D473C2B5155F879CB722E99 /* QuickActionRowView.swift */,
 				6828870E05C9747F55C30BEE /* SettingsResetRow.swift */,
 				2794897A7761B77AEFEC405F /* TextLinkButton.swift */,
 				65EACD3F08D21F717F82A9A0 /* ThemedTextField.swift */,
@@ -649,6 +652,7 @@
 				C25EEE04D310E199A62D191C /* PasteboardTypes.swift in Sources */,
 				5050C197246573A2D7174B05 /* QuickAction.swift in Sources */,
 				A45CE727F8ACE4FCCD673DC1 /* QuickActionIconView.swift in Sources */,
+				DFBA414A23A2A1292823B9BD /* QuickActionRowView.swift in Sources */,
 				AD0E26BEE5234D9F2F9146C7 /* QuickActionsSectionView.swift in Sources */,
 				205D81DA92E72BA9F8C00522 /* QuickActionsStore.swift in Sources */,
 				6EF0E2148355BAE5EEE90A2A /* SettingsConfigStore.swift in Sources */,

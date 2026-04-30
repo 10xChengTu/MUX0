@@ -164,6 +164,11 @@ enum L10n {
             static let hideMouseWhileTyping   = LocalizedStringResource("settings.terminal.hideMouseWhileTyping")
             static let confirmClose           = LocalizedStringResource("settings.terminal.confirmClose")
         }
+        enum QuickActions {
+            static let customNamePlaceholder    = LocalizedStringResource("settings.quickActions.customNamePlaceholder")
+            static let customCommandPlaceholder = LocalizedStringResource("settings.quickActions.customCommandPlaceholder")
+            static let deleteCustomTooltip      = LocalizedStringResource("settings.quickActions.deleteCustom.tooltip")
+        }
         enum Shell {
             static let integration         = LocalizedStringResource("settings.shell.integration")
             static let features            = LocalizedStringResource("settings.shell.features")

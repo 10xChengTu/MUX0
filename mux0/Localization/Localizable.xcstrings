@@ -316,6 +316,27 @@
         "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "跟随系统" } }
       }
     },
+    "settings.quickActions.customCommandPlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Command" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "命令" } }
+      }
+    },
+    "settings.quickActions.customNamePlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Name" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "名称" } }
+      }
+    },
+    "settings.quickActions.deleteCustom.tooltip" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Delete custom action" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "删除自定义快捷操作" } }
+      }
+    },
     "settings.reset.alertTitle" : {
       "extractionState" : "manual",
       "localizations" : {

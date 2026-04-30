@@ -68,6 +68,10 @@ final class L10nSmokeTests: XCTestCase {
         "settings.font.thicken",
         // Settings — language
         "settings.language.system",
+        // Settings — quickActions
+        "settings.quickActions.customCommandPlaceholder",
+        "settings.quickActions.customNamePlaceholder",
+        "settings.quickActions.deleteCustom.tooltip",
         // Settings — reset
         "settings.reset.alertTitle",
         "settings.reset.button",
