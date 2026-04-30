@@ -149,6 +149,15 @@ final class QuickActionsStoreTests: XCTestCase {
         XCTAssertEqual(c, "?")
     }
 
+    func test_setBuiltinCommand_ignoresNonBuiltinId() {
+        let (store, settings) = makeIsolatedStore()
+        store.setBuiltinCommand("not-a-builtin", "some-cmd")
+        XCTAssertTrue(store.builtinCommandOverrides.isEmpty,
+                      "non-builtin ids should not enter the overrides map")
+        // No phantom key should land in settings either
+        XCTAssertNil(settings.get("mux0-quickactions-builtin-command-not-a-builtin"))
+    }
+
     func test_reorderDisplay_movesEnabledIds() {
         let (store, _) = makeIsolatedStore()
         store.setEnabled("lazygit", true)

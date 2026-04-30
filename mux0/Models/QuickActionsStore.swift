@@ -156,12 +156,10 @@ final class QuickActionsStore {
         if enabledIds != before { saveEnabled() }
     }
 
-    /// Set or clear the per-builtin command override. Empty / whitespace
-    /// command clears the override (so `command(for:)` falls back to the
-    /// builtin default). Non-builtin ids are silently no-ops at the
-    /// persistence layer (the key is still written, but `command(for:)`
-    /// won't read it back) — callers should restrict to builtins.
+    /// Set a per-builtin command override. No-ops for non-builtin ids.
+    /// Empty/whitespace input clears the override.
     func setBuiltinCommand(_ id: QuickActionId, _ command: String) {
+        guard BuiltinQuickAction.from(id: id) != nil else { return }
         let trimmed = command.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.isEmpty {
             builtinCommandOverrides.removeValue(forKey: id)
