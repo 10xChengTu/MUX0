@@ -182,11 +182,11 @@ Tab + SplitPane 全部用 AppKit，原因：NSSplitView 的 divider 拖拽、z-o
 
 ### Git Tab
 
-`TerminalTab.kind == .git` 标记一种语义化 tab：右上角 git 图标按钮通过 `WorkspaceStore.ensureGitTab(in:)` 创建（或切到现有），title 默认 `"Git"`，allow rename。每个 workspace 最多一个。
+`TerminalTab.kind == .git` 标记一种语义化 tab：右上角 git 图标按钮通过 `WorkspaceStore.ensureGitTab(in:)` 创建（或切到现有），标题默认 `Git`，沿用普通 tab 的重命名流程。每个 workspace 最多一个 git tab——识别只看 `kind` 字段而非 title，所以用户即便把它重命名为别的名字，再点按钮仍视作同一个。新建时通过 `TerminalPwdStore.inherit(from:to:)` 把调用前 selected tab 的 pwd 继承给新终端，让 lazygit 落地在用户当下浏览的仓库。
 
 启动命令注入路径：`TabContentView.resolvedStartupCommand(forTerminal:)` 检测到 `tab.kind == .git` 且 `id == tab.layout.allTerminalIds().first` 时，从 `mux0-git-viewer` setting 读命令（默认 `lazygit`）作为 ghostty surface 的 `initial_input`。意味着重启 mux0 → surface 重建 → viewer 自动重跑；split 出的次级 pane 不会再跑（它不是 layout 第一个终端）。
 
-视觉上 tab pill 加了 leading SF Symbol：git tab → `arrow.triangle.branch`，普通 terminal tab → `terminal`，颜色跟随 title 文字色。
+视觉上 tab pill 加了 leading SF Symbol：git tab → `arrow.triangle.branch`，普通 terminal tab → `terminal`，颜色跟随 title 文字色。详见 `docs/superpowers/specs/2026-04-30-git-tab-design.md`。
 
 ## Settings Layer
 
