@@ -47,9 +47,10 @@ struct ShellSectionView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(L10n.Settings.Shell.gitViewerHelp)
                     Text(L10n.Settings.Shell.gitViewerInstallHint)
-                        .foregroundStyle(.secondary)
+                        .opacity(0.85)
                 }
-                .font(.footnote)
+                .font(Font(DT.Font.small))
+                .foregroundColor(Color(theme.textTertiary))
             }
 
             SettingsResetRow(settings: settings, keys: Self.managedKeys)
