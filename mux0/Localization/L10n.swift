@@ -82,6 +82,12 @@ enum L10n {
         // See Strings.xcstrings for the full key list.
     }
 
+    // MARK: - Topbar (overlay buttons in ContentView's title bar band)
+
+    enum Topbar {
+        static let gitButtonTooltip     = LocalizedStringResource("topbar.gitButton.tooltip")
+    }
+
     // MARK: - Settings
 
     enum Settings {
@@ -201,12 +207,6 @@ enum L10n {
     enum App {
         static let ghosttyNotFoundTitle     = LocalizedStringResource("app.ghostty.notFound.title")
         static let ghosttyNotFoundDetail    = LocalizedStringResource("app.ghostty.notFound.detail")
-    }
-
-    // MARK: - Topbar (overlay buttons in ContentView's title bar band)
-
-    enum Topbar {
-        static let gitButtonTooltip     = LocalizedStringResource("topbar.gitButton.tooltip")
     }
 
     // MARK: - Menu

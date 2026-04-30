@@ -474,7 +474,7 @@
       "extractionState" : "manual",
       "localizations" : {
         "en" : { "stringUnit" : { "state" : "translated", "value" : "Runs in the Git tab created by clicking the Git icon in the top-right. Try `lazygit`, `gitui`, or `tig`." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "点击右上角 Git 图标后，会在新建的 Git tab 里自动执行该命令。可选：lazygit、gitui、tig。" } }
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "点击右上角 Git 图标后，会在新建的 Git tab 里自动执行该命令。可选：`lazygit`、`gitui`、`tig`。" } }
       }
     },
     "settings.shell.gitViewer.installHint" : {

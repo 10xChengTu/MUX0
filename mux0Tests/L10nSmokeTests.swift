@@ -80,6 +80,9 @@ final class L10nSmokeTests: XCTestCase {
         "settings.shell.customCommand",
         "settings.shell.defaultPlaceholder",
         "settings.shell.features",
+        "settings.shell.gitViewer.help",
+        "settings.shell.gitViewer.installHint",
+        "settings.shell.gitViewer.label",
         "settings.shell.integration",
         // Settings — terminal
         "settings.terminal.confirmClose",
@@ -142,10 +145,6 @@ final class L10nSmokeTests: XCTestCase {
         "tab.row.rename",
         // Topbar
         "topbar.gitButton.tooltip",
-        // Settings — shell (git viewer)
-        "settings.shell.gitViewer.help",
-        "settings.shell.gitViewer.installHint",
-        "settings.shell.gitViewer.label",
     ]
 
     override func tearDown() {
