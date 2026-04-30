@@ -90,6 +90,7 @@ mux0/
     ├── GhosttyConfigReader.swift    — 从 ghostty config 读颜色
     ├── ThemeManager.swift           — @Observable，主题解析与分发（含 opacity / blur）
     ├── IconButton.swift             — 紧凑图标按钮（hover/pressed 走 theme token）
+    ├── DraggedSnapshotShadow.swift  — 拖拽 ghost 的分层阴影合成（Josh Comeau layered-shadow 方案）
     └── TerminalStatusIconView.swift — 终端状态圆点图标
 ```
 
@@ -125,6 +126,7 @@ mux0/
 | 修改主题颜色逻辑 | `Theme/ThemeManager.swift`, `Theme/AppTheme.swift`, `docs/architecture.md#theme` |
 | 增加新的 workspace 元信息字段 | `Metadata/WorkspaceMetadata.swift` → `Metadata/MetadataRefresher.swift` → `Sidebar/WorkspaceListView.swift`（行视觉） |
 | 改标签/分割窗格交互（新建 tab、拆分、拖 divider） | `TabContent/TabBarView.swift`, `TabContent/TabContentView.swift`, `TabContent/SplitPaneView.swift`, `Models/WorkspaceStore.swift`（新 CRUD 方法） |
+| 增加新的 tab 类型 (TabKind) | `Models/Workspace.swift`（加 enum case），`Models/WorkspaceStore.swift`（addTab kind 透传 + ensure*Tab helper），`TabContent/TabContentView.swift`（resolvedStartupCommand 注入），`TabContent/TabBarView.swift`（kindIcon 映射），`ContentView.swift`（顶部入口按钮），i18n 与 settings 同步 |
 | 接入新的 ghostty C API | `Ghostty/GhosttyBridge.swift`，需同步更新 `docs/ghostty-integration.md` |
 | 改自动更新 UI / 行为 | `mux0/Update/UpdateStore.swift`, `mux0/Update/UpdateUserDriver.swift`, `mux0/Settings/Sections/UpdateSectionView.swift`, `mux0/Sidebar/SidebarView.swift`（footer） |
 | 改发布流水线 / appcast 格式 | `.github/workflows/release.yml`, `.github/scripts/render-appcast.sh`, `docs/build.md` |

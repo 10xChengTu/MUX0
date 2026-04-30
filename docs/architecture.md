@@ -180,6 +180,14 @@ Tab + SplitPane 全部用 AppKit，原因：NSSplitView 的 divider 拖拽、z-o
 - `SurfaceScrollView` — `NSScrollView` + 空白 `documentView`，`GhosttyTerminalView` 作为 documentView 子视图并 pin 在 `visibleRect` 上。消费 ghostty 的 `SCROLLBAR`（total/offset/len 行数）与 `CELL_SIZE`（backing px → pt）action 驱动 scroller；用户拖拽时转成行号并通过 `scroll_to_row:N` binding action 回写 ghostty。永远 overlay 样式以避免非 overlay 滚动条变宽引起的 PTY reflow
 - `GhosttyTerminalView` — 持有 `ghostty_surface_t`，Metal CALayer 渲染；失焦时整体降 alpha 到 `unfocused-split-opacity`
 
+### Git Tab
+
+`TerminalTab.kind == .git` 标记一种语义化 tab：右上角 git 图标按钮通过 `WorkspaceStore.ensureGitTab(in:)` 创建（或切到现有），title 默认 `"Git"`，allow rename。每个 workspace 最多一个。
+
+启动命令注入路径：`TabContentView.resolvedStartupCommand(forTerminal:)` 检测到 `tab.kind == .git` 且 `id == tab.layout.allTerminalIds().first` 时，从 `mux0-git-viewer` setting 读命令（默认 `lazygit`）作为 ghostty surface 的 `initial_input`。意味着重启 mux0 → surface 重建 → viewer 自动重跑；split 出的次级 pane 不会再跑（它不是 layout 第一个终端）。
+
+视觉上 tab pill 加了 leading SF Symbol：git tab → `arrow.triangle.branch`，普通 terminal tab → `terminal`，颜色跟随 title 文字色。
+
 ## Settings Layer
 
 `SettingsView` 是纯 SwiftUI Form，覆盖在 TabBridge 之上。进入设置时 TabBridge 被压到底层（`.opacity(0)` + `.allowsHitTesting(false)`）**但不 dismantle**，否则 `NSViewRepresentable` 重建会让所有 ghostty surface 被释放重建。
