@@ -37,7 +37,7 @@ final class L10nSmokeTests: XCTestCase {
         // QuickActions
         "quickActions.builtin.claude",
         "quickActions.builtin.codex",
-        "quickActions.builtin.lazygit",
+        "quickActions.builtin.gitui",
         "quickActions.builtin.opencode",
         // Settings — appearance
         "settings.appearance.backgroundBlur",

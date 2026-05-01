@@ -148,11 +148,11 @@
         "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "Codex" } }
       }
     },
-    "quickActions.builtin.lazygit" : {
+    "quickActions.builtin.gitui" : {
       "extractionState" : "manual",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Lazygit" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "Lazygit" } }
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "GitUI" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "GitUI" } }
       }
     },
     "quickActions.builtin.opencode" : {

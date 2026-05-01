@@ -132,7 +132,7 @@ struct TerminalTab: Codable, Identifiable, Equatable {
     var focusedTerminalId: UUID
     /// Quick Action binding for this tab. nil = ordinary terminal tab.
     /// Non-nil values match either a `BuiltinQuickAction.id` (e.g.
-    /// `"lazygit"`, `"claude"`) or a custom action's UUID. When the tab's
+    /// `"gitui"`, `"claude"`) or a custom action's UUID. When the tab's
     /// first terminal opens, `TabContentView.resolvedStartupCommand` resolves
     /// this id via `QuickActionsStore.command(for:)` and injects the result
     /// as the surface's initial_input.

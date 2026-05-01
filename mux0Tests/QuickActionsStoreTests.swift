@@ -38,9 +38,9 @@ final class QuickActionsStoreTests: XCTestCase {
 
     func test_setEnabled_appendsAndPersists() {
         let (store, settings) = makeIsolatedStore()
-        store.setEnabled("lazygit", true)
-        XCTAssertEqual(store.enabledIds, ["lazygit"])
-        XCTAssertTrue(store.isEnabled("lazygit"))
+        store.setEnabled("gitui", true)
+        XCTAssertEqual(store.enabledIds, ["gitui"])
+        XCTAssertTrue(store.isEnabled("gitui"))
 
         // Force the debounced write to flush to disk, then re-instantiate
         // the SettingsConfigStore from the same file path so the round-trip
@@ -48,42 +48,42 @@ final class QuickActionsStoreTests: XCTestCase {
         settings.save()
 
         let store2 = QuickActionsStore(settings: settings)
-        XCTAssertEqual(store2.enabledIds, ["lazygit"])
+        XCTAssertEqual(store2.enabledIds, ["gitui"])
     }
 
     func test_setEnabled_idempotent() {
         let (store, _) = makeIsolatedStore()
-        store.setEnabled("lazygit", true)
-        store.setEnabled("lazygit", true)
-        XCTAssertEqual(store.enabledIds, ["lazygit"])
+        store.setEnabled("gitui", true)
+        store.setEnabled("gitui", true)
+        XCTAssertEqual(store.enabledIds, ["gitui"])
     }
 
     func test_setEnabled_offRemoves() {
         let (store, _) = makeIsolatedStore()
-        store.setEnabled("lazygit", true)
+        store.setEnabled("gitui", true)
         store.setEnabled("claude", true)
-        store.setEnabled("lazygit", false)
+        store.setEnabled("gitui", false)
         XCTAssertEqual(store.enabledIds, ["claude"])
     }
 
     func test_command_builtinDefault() {
         let (store, _) = makeIsolatedStore()
-        XCTAssertEqual(store.command(for: "lazygit"), "lazygit")
+        XCTAssertEqual(store.command(for: "gitui"), "gitui")
         XCTAssertEqual(store.command(for: "claude"), "claude")
     }
 
     func test_command_builtinOverride() {
         let (store, _) = makeIsolatedStore()
-        store.setBuiltinCommand("lazygit", "gitui")
-        XCTAssertEqual(store.command(for: "lazygit"), "gitui")
+        store.setBuiltinCommand("gitui", "lazygit")
+        XCTAssertEqual(store.command(for: "gitui"), "lazygit")
     }
 
     func test_command_builtinEmptyOverrideFallsBackToDefault() {
         let (store, _) = makeIsolatedStore()
-        store.setBuiltinCommand("lazygit", "gitui")
-        store.setBuiltinCommand("lazygit", "")
-        XCTAssertEqual(store.command(for: "lazygit"), "lazygit")
-        XCTAssertNil(store.builtinCommandOverrides["lazygit"])
+        store.setBuiltinCommand("gitui", "lazygit")
+        store.setBuiltinCommand("gitui", "")
+        XCTAssertEqual(store.command(for: "gitui"), "gitui")
+        XCTAssertNil(store.builtinCommandOverrides["gitui"])
     }
 
     func test_command_unknownIdReturnsNil() {
@@ -160,7 +160,7 @@ final class QuickActionsStoreTests: XCTestCase {
 
     func test_reorderDisplay_movesEnabledIds() {
         let (store, _) = makeIsolatedStore()
-        store.setEnabled("lazygit", true)
+        store.setEnabled("gitui", true)
         store.setEnabled("claude", true)
         store.setEnabled("codex", true)
         let codexIdx = store.displayList.firstIndex(of: "codex")!
@@ -173,13 +173,13 @@ final class QuickActionsStoreTests: XCTestCase {
         let custom1 = store.addCustomAction()
         let custom2 = store.addCustomAction()
 
-        // Enable lazygit + custom1 (in that order)
-        store.setEnabled("lazygit", true)
+        // Enable gitui + custom1 (in that order)
+        store.setEnabled("gitui", true)
         store.setEnabled(custom1, true)
 
         let list = store.fullList
         // Enabled items first, in enabledIds order
-        XCTAssertEqual(list.prefix(2), ["lazygit", custom1])
+        XCTAssertEqual(list.prefix(2), ["gitui", custom1])
         // Then disabled built-ins (in BuiltinQuickAction.allCases order)
         XCTAssertTrue(list.contains("claude"))
         XCTAssertTrue(list.contains("codex"))
@@ -203,19 +203,19 @@ final class QuickActionsStoreTests: XCTestCase {
 
     func test_reorderFull_movesEnabledBuiltinUpdatesEnabledIdsOrder() {
         let (store, _) = makeIsolatedStore()
-        store.setEnabled("lazygit", true)
+        store.setEnabled("gitui", true)
         store.setEnabled("claude", true)
         store.setEnabled("codex", true)
-        // fullList prefix is [lazygit, claude, codex, ...]; move codex (idx 2) to 0
+        // fullList prefix is [gitui, claude, codex, ...]; move codex (idx 2) to 0
         let codexIdx = store.fullList.firstIndex(of: "codex")!
         store.reorderFull(from: IndexSet([codexIdx]), to: 0)
-        XCTAssertEqual(store.enabledIds, ["codex", "lazygit", "claude"])
-        XCTAssertEqual(store.displayList, ["codex", "lazygit", "claude"])
+        XCTAssertEqual(store.enabledIds, ["codex", "gitui", "claude"])
+        XCTAssertEqual(store.displayList, ["codex", "gitui", "claude"])
     }
 
     func test_reorderFull_movingDisabledItemDoesNotChangeEnabledIds() {
         let (store, _) = makeIsolatedStore()
-        store.setEnabled("lazygit", true)
+        store.setEnabled("gitui", true)
         let beforeEnabled = store.enabledIds
         // Move codex (disabled) somewhere
         let codexIdx = store.fullList.firstIndex(of: "codex")!
@@ -229,10 +229,10 @@ final class QuickActionsStoreTests: XCTestCase {
         let c2 = store.addCustomAction()
         let c3 = store.addCustomAction()
         // customActions order: [c1, c2, c3]
-        // Move c3 (last in fullList) to right after lazygit (position 1).
+        // Move c3 (last in fullList) to right after gitui (position 1).
         let c3Idx = store.fullList.firstIndex(of: c3)!
-        let lazygitIdx = store.fullList.firstIndex(of: "lazygit")!
-        store.reorderFull(from: IndexSet([c3Idx]), to: lazygitIdx + 1)
+        let gituiIdx = store.fullList.firstIndex(of: "gitui")!
+        store.reorderFull(from: IndexSet([c3Idx]), to: gituiIdx + 1)
         // customActions array's relative order should now be [c3, c1, c2] OR [c1, c3, c2] OR similar — verify via fullList
         let customsInFull = store.fullList.filter { id in store.customActions.contains(where: { $0.id == id }) }
         XCTAssertEqual(customsInFull, [c3, c1, c2])

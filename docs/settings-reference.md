@@ -67,10 +67,10 @@ mux0 的设置面板分成七个 tab：**Appearance（外观）**、**Font（字
 | 设置项 | config key | 类型 | 默认值 | 说明 |
 |---|---|---|---|---|
 | Enabled & order | `mux0-quickactions-enabled` | JSON 数组 | `[]` | 启用且按显示顺序排列的 quick action id。同时承载启用集合与启用集合内部顺序。 |
-| Builtin command override | `mux0-quickactions-builtin-command-<id>` | string | （空 = 默认命令） | 内置 action 的命令覆盖。`<id>` ∈ `{lazygit, claude, codex, opencode}`。空字符串等同删除该覆盖。 |
+| Builtin command override | `mux0-quickactions-builtin-command-<id>` | string | （空 = 默认命令） | 内置 action 的命令覆盖。`<id>` ∈ `{gitui, claude, codex, opencode}`。空字符串等同删除该覆盖。 |
 | Custom actions | `mux0-quickactions-custom` | JSON 数组 | `[]` | 自定义 action 列表。`[{"id":"<uuid>","name":"...","command":"..."}]`。 |
 
-命令字段的语义：传给 shell 直接执行的字符串（不含 `\n`，由 ghostty 启动逻辑追加）。可以包含 shell 解释的语法，例如 `lazygit -p $PWD`、`claude --resume`、`tig log`。
+命令字段的语义：传给 shell 直接执行的字符串（不含 `\n`，由 ghostty 启动逻辑追加）。可以包含 shell 解释的语法，例如 `gitui`、`claude --resume`、`tig log`。
 
 身份按 id 区分（不是 name 也不是 command）；改命令不会让现有 tab 变成另一个 action 的 tab。
 

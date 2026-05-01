@@ -650,15 +650,15 @@ final class WorkspaceStoreTests: XCTestCase {
 
     // MARK: - quickActionId & addQuickActionTab
 
-    func testTerminalTabQuickActionId_codableRoundTrip_lazygitValue() throws {
-        var tab = TerminalTab(title: "Lazygit")
-        tab.quickActionId = "lazygit"
+    func testTerminalTabQuickActionId_codableRoundTrip_gituiValue() throws {
+        var tab = TerminalTab(title: "GitUI")
+        tab.quickActionId = "gitui"
 
         let data = try JSONEncoder().encode(tab)
         let decoded = try JSONDecoder().decode(TerminalTab.self, from: data)
 
-        XCTAssertEqual(decoded.quickActionId, "lazygit")
-        XCTAssertEqual(decoded.title, "Lazygit")
+        XCTAssertEqual(decoded.quickActionId, "gitui")
+        XCTAssertEqual(decoded.title, "GitUI")
     }
 
     func testTerminalTabQuickActionId_codableRoundTrip_nilValue() throws {
@@ -699,14 +699,14 @@ final class WorkspaceStoreTests: XCTestCase {
         let wsId = store.workspaces[0].id
         let tabsBefore = store.workspaces[0].tabs.count
 
-        let result = store.addQuickActionTab(id: "lazygit", title: "Lazygit", in: wsId)
+        let result = store.addQuickActionTab(id: "gitui", title: "GitUI", in: wsId)
 
         XCTAssertNotNil(result)
         XCTAssertEqual(store.workspaces[0].tabs.count, tabsBefore + 1)
         XCTAssertEqual(store.workspaces[0].selectedTabId, result?.tabId)
         let newTab = store.workspaces[0].tabs.first(where: { $0.id == result?.tabId })
-        XCTAssertEqual(newTab?.quickActionId, "lazygit")
-        XCTAssertEqual(newTab?.title, "Lazygit")
+        XCTAssertEqual(newTab?.quickActionId, "gitui")
+        XCTAssertEqual(newTab?.title, "GitUI")
         XCTAssertEqual(newTab?.layout.allTerminalIds().first, result?.terminalId)
     }
 
@@ -714,24 +714,24 @@ final class WorkspaceStoreTests: XCTestCase {
         let store = WorkspaceStore(persistenceKey: "test-\(UUID())")
         store.createWorkspace(name: "ws")
         let wsId = store.workspaces[0].id
-        let firstResult = store.addQuickActionTab(id: "lazygit", title: "Lazygit", in: wsId)
+        let firstResult = store.addQuickActionTab(id: "gitui", title: "GitUI", in: wsId)
         XCTAssertNotNil(firstResult)
         let tabsAfterFirst = store.workspaces[0].tabs.count
 
-        // Switch focus away from the lazygit tab, then re-invoke
+        // Switch focus away from the gitui tab, then re-invoke
         let originalTabId = store.workspaces[0].tabs[0].id
         store.selectTab(id: originalTabId, in: wsId)
 
-        let secondResult = store.addQuickActionTab(id: "lazygit", title: "Lazygit", in: wsId)
+        let secondResult = store.addQuickActionTab(id: "gitui", title: "GitUI", in: wsId)
 
         // Top-bar quick-action button is "create new" — must NOT reuse the existing
-        // lazygit tab. Each click must spawn a fresh session.
+        // gitui tab. Each click must spawn a fresh session.
         XCTAssertNotNil(secondResult)
         XCTAssertNotEqual(secondResult?.tabId, firstResult?.tabId)
         XCTAssertEqual(store.workspaces[0].tabs.count, tabsAfterFirst + 1)
         XCTAssertEqual(store.workspaces[0].selectedTabId, secondResult?.tabId)
-        let lazygitTabs = store.workspaces[0].tabs.filter { $0.quickActionId == "lazygit" }
-        XCTAssertEqual(lazygitTabs.count, 2)
+        let gituiTabs = store.workspaces[0].tabs.filter { $0.quickActionId == "gitui" }
+        XCTAssertEqual(gituiTabs.count, 2)
     }
 
     func testAddQuickActionTab_returnsSourcePwdTerminalIdFromPreviouslyFocusedTab() {
@@ -743,7 +743,7 @@ final class WorkspaceStoreTests: XCTestCase {
         let originalTermId = originalTab.layout.allTerminalIds()[0]
         XCTAssertEqual(store.workspaces[0].selectedTabId, originalTab.id)
 
-        let result = store.addQuickActionTab(id: "lazygit", title: "Lazygit", in: wsId)
+        let result = store.addQuickActionTab(id: "gitui", title: "GitUI", in: wsId)
 
         // Source = focused terminal of the tab that was selected BEFORE we switched.
         XCTAssertEqual(result?.sourcePwdTerminalId, originalTermId)
@@ -755,7 +755,7 @@ final class WorkspaceStoreTests: XCTestCase {
 
         // Calling on an unknown workspace must not crash and must not mutate anything.
         let tabsBefore = store.workspaces[0].tabs.count
-        let result = store.addQuickActionTab(id: "lazygit", title: "Lazygit", in: UUID())
+        let result = store.addQuickActionTab(id: "gitui", title: "GitUI", in: UUID())
 
         XCTAssertNil(result)
         XCTAssertEqual(store.workspaces[0].tabs.count, tabsBefore)
@@ -765,7 +765,7 @@ final class WorkspaceStoreTests: XCTestCase {
         let store = WorkspaceStore(persistenceKey: "test.\(UUID().uuidString)")
         store.createWorkspace(name: "ws")
         let wsId = store.workspaces[0].id
-        let r1 = store.addQuickActionTab(id: "lazygit", title: "Lazygit", in: wsId)
+        let r1 = store.addQuickActionTab(id: "gitui", title: "GitUI", in: wsId)
         let r2 = store.addQuickActionTab(id: "claude", title: "Claude Code", in: wsId)
         XCTAssertNotNil(r1)
         XCTAssertNotNil(r2)

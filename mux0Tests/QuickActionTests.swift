@@ -5,11 +5,11 @@ final class QuickActionTests: XCTestCase {
     func test_builtinAllCases_haveFourEntries() {
         XCTAssertEqual(BuiltinQuickAction.allCases.count, 4)
         XCTAssertEqual(Set(BuiltinQuickAction.allCases.map(\.id)),
-                       Set(["lazygit", "claude", "codex", "opencode"]))
+                       Set(["gitui", "claude", "codex", "opencode"]))
     }
 
     func test_builtinDefaultCommands_matchId() {
-        XCTAssertEqual(BuiltinQuickAction.lazygit.defaultCommand, "lazygit")
+        XCTAssertEqual(BuiltinQuickAction.gitui.defaultCommand, "gitui")
         XCTAssertEqual(BuiltinQuickAction.claude.defaultCommand, "claude")
         XCTAssertEqual(BuiltinQuickAction.codex.defaultCommand, "codex")
         XCTAssertEqual(BuiltinQuickAction.opencode.defaultCommand, "opencode")
@@ -22,9 +22,9 @@ final class QuickActionTests: XCTestCase {
         XCTAssertEqual(decoded, original)
     }
 
-    func test_quickActionIcon_sfSymbolForLazygit() {
-        guard case .sfSymbol(let name) = BuiltinQuickAction.lazygit.iconSource else {
-            XCTFail("lazygit should be sfSymbol"); return
+    func test_quickActionIcon_sfSymbolForGitui() {
+        guard case .sfSymbol(let name) = BuiltinQuickAction.gitui.iconSource else {
+            XCTFail("gitui should be sfSymbol"); return
         }
         XCTAssertEqual(name, "arrow.triangle.branch")
     }

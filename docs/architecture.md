@@ -182,17 +182,17 @@ Tab + SplitPane 全部用 AppKit，原因：NSSplitView 的 divider 拖拽、z-o
 
 ### Quick Actions
 
-WorkspaceStore 的每个 Tab 可关联一个**快捷操作 ID**（`TerminalTab.quickActionId: String?`），由顶栏的 Quick Actions Bar（`ContentView.quickActionsBar`）按 `QuickActionsStore.displayList` 顺序渲染按钮触发：点击 → `WorkspaceStore.addQuickActionTab(id:title:in:)` 在当前 workspace 始终新建一个带该 quickActionId 的 tab，并通过 `TerminalPwdStore.inherit(from:to:)` 继承前一个焦点 pane 的 pwd（让 `lazygit` 等命令落地在用户当下浏览的 cwd）。
+WorkspaceStore 的每个 Tab 可关联一个**快捷操作 ID**（`TerminalTab.quickActionId: String?`），由顶栏的 Quick Actions Bar（`ContentView.quickActionsBar`）按 `QuickActionsStore.displayList` 顺序渲染按钮触发：点击 → `WorkspaceStore.addQuickActionTab(id:title:in:)` 在当前 workspace 始终新建一个带该 quickActionId 的 tab，并通过 `TerminalPwdStore.inherit(from:to:)` 继承前一个焦点 pane 的 pwd（让 `gitui` 等命令落地在用户当下浏览的 cwd）。
 
 **每点一次都新建。** 顶栏快捷按钮是"新建快捷 tab"而非"切到那个 tab"，每次点击都起一个全新会话。同一 workspace 内可以同时存在多个相同 quickActionId 的 tab。
 
 **`QuickActionsStore`** 是 enabled 列表（按显示顺序排）+ 内置命令覆盖（per-id）+ 自定义条目数组的单一真理源，全部通过 `SettingsConfigStore` 持久化（3 个键：`mux0-quickactions-enabled` / `mux0-quickactions-builtin-command-<id>` / `mux0-quickactions-custom`）。`@Observable`，UI 直接订阅。
 
-**命令注入路径：** Tab 第一个终端启动时（`id == tab.layout.allTerminalIds().first`），`TabContentView.resolvedStartupCommand(forTerminal:)` 检测 `tab.quickActionId` 非空 → 调 `quickActionsStore.command(for: id)`：内置 = override 或默认（`lazygit` / `claude` / `codex` / `opencode`），自定义 = 用户输入命令。返回值作为 `initial_input` + `\n` 喂给 ghostty surface，shell 启动后立即执行。Split 出的次级 pane 不会再跑（它不是 layout 第一个终端）。
+**命令注入路径：** Tab 第一个终端启动时（`id == tab.layout.allTerminalIds().first`），`TabContentView.resolvedStartupCommand(forTerminal:)` 检测 `tab.quickActionId` 非空 → 调 `quickActionsStore.command(for: id)`：内置 = override 或默认（`gitui` / `claude` / `codex` / `opencode`），自定义 = 用户输入命令。返回值作为 `initial_input` + `\n` 喂给 ghostty surface，shell 启动后立即执行。Split 出的次级 pane 不会再跑（它不是 layout 第一个终端）。
 
-**重启恢复：** Tab 数据序列化到 UserDefaults，重启后 `tab.quickActionId` 还在 → 同一注入路径自动重新跑命令（lazygit 重新打开、claude 重新连接……）。Surface 不序列化，重启后是新 ghostty surface。
+**重启恢复：** Tab 数据序列化到 UserDefaults，重启后 `tab.quickActionId` 还在 → 同一注入路径自动重新跑命令（gitui 重新打开、claude 重新连接……）。Surface 不序列化，重启后是新 ghostty surface。
 
-**图标：** `BuiltinQuickAction.iconSource` 三种来源——SF Symbol（lazygit 用 `arrow.triangle.branch`）、Asset Catalog（claude / codex / opencode 用 lobe-icons SVG，`template-rendering-intent: template`）、首字母（自定义）。三种统一通过 `QuickActionIconView` 渲染，跟随 theme token tint。
+**图标：** `BuiltinQuickAction.iconSource` 三种来源——SF Symbol（gitui 用 `arrow.triangle.branch`）、Asset Catalog（claude / codex / opencode 用 lobe-icons SVG，`template-rendering-intent: template`）、首字母（自定义）。三种统一通过 `QuickActionIconView` 渲染，跟随 theme token tint。
 
 **Settings：** `Settings → Quick Actions` 提供单一可拖拽列表，所有 4 内置 + N 自定义混排，每行可独立 toggle 启用 / 改命令；自定义可改名 / 删除。详见 `docs/superpowers/specs/2026-04-30-quick-actions.md`。
 

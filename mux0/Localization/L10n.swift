@@ -87,7 +87,7 @@ enum L10n {
     /// user-entered name verbatim and don't pass through this namespace.
     enum QuickActions {
         enum Builtin {
-            static let lazygit  = LocalizedStringResource("quickActions.builtin.lazygit")
+            static let gitui    = LocalizedStringResource("quickActions.builtin.gitui")
             static let claude   = LocalizedStringResource("quickActions.builtin.claude")
             static let codex    = LocalizedStringResource("quickActions.builtin.codex")
             static let opencode = LocalizedStringResource("quickActions.builtin.opencode")

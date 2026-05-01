@@ -252,7 +252,7 @@ final class TabContentView: NSView {
     /// Pick the shell command to auto-execute on a fresh surface. Source order:
     ///   0. Quick action tab's first terminal — resolved via
     ///      `QuickActionsStore.command(for:)`. Built-in actions fall back to
-    ///      default commands (e.g. `lazygit`); custom actions return nil if
+    ///      default commands (e.g. `gitui`); custom actions return nil if
     ///      their command is empty (in which case the next branch's defaults
     ///      take over). Fires every time the surface is built — so restarting
     ///      mux0 re-runs the action automatically. Splitting inside a quick

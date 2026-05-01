@@ -1,7 +1,7 @@
 import Foundation
 
 /// Stable identifier for a Quick Action. Builtin actions use their raw enum
-/// case as the id (`"lazygit"`, `"claude"`, ...); custom actions use a UUID
+/// case as the id (`"gitui"`, `"claude"`, ...); custom actions use a UUID
 /// string assigned at creation time.
 typealias QuickActionId = String
 
@@ -13,7 +13,7 @@ typealias QuickActionId = String
 /// `displayName`, `iconSource`, and add the corresponding L10n key + icon
 /// asset (or SF Symbol).
 enum BuiltinQuickAction: String, CaseIterable, Identifiable {
-    case lazygit
+    case gitui
     case claude
     case codex
     case opencode
@@ -24,7 +24,7 @@ enum BuiltinQuickAction: String, CaseIterable, Identifiable {
     /// can override per-action via `QuickActionsStore.setBuiltinCommand`.
     var defaultCommand: String {
         switch self {
-        case .lazygit:  return "lazygit"
+        case .gitui:    return "gitui"
         case .claude:   return "claude"
         case .codex:    return "codex"
         case .opencode: return "opencode"
@@ -35,7 +35,7 @@ enum BuiltinQuickAction: String, CaseIterable, Identifiable {
     /// custom actions render their user-entered name verbatim instead.
     var displayName: LocalizedStringResource {
         switch self {
-        case .lazygit:  return L10n.QuickActions.Builtin.lazygit
+        case .gitui:    return L10n.QuickActions.Builtin.gitui
         case .claude:   return L10n.QuickActions.Builtin.claude
         case .codex:    return L10n.QuickActions.Builtin.codex
         case .opencode: return L10n.QuickActions.Builtin.opencode
@@ -48,7 +48,7 @@ enum BuiltinQuickAction: String, CaseIterable, Identifiable {
     /// chip (`.letter`) computed from the action's name.
     var iconSource: QuickActionIcon {
         switch self {
-        case .lazygit:  return .sfSymbol("arrow.triangle.branch")
+        case .gitui:    return .sfSymbol("arrow.triangle.branch")
         case .claude:   return .asset("quick-action-claudecode")
         case .codex:    return .asset("quick-action-codex")
         case .opencode: return .asset("quick-action-opencode")
