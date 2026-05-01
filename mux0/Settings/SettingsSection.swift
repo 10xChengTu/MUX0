@@ -1,13 +1,14 @@
 import Foundation
 
-/// 设置视图的七个硬编码分类。顺序即 tab 条显示顺序，不可重排。
+/// 设置视图的七个硬编码分类。顺序即 tab 条显示顺序（quickActions / agents
+/// 被顶到第 2/3 位是产品决定，使用频率高于 font / terminal / shell）。
 enum SettingsSection: String, CaseIterable, Identifiable {
     case appearance
+    case quickActions
+    case agents
     case font
     case terminal
     case shell
-    case quickActions
-    case agents
     case update
 
     var id: String { rawValue }
