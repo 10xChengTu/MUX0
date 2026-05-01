@@ -303,6 +303,20 @@ final class GhosttyTerminalView: NSView, NSTextInputClient {
         let w = UInt32(pointSize.width * scale)
         let h = UInt32(pointSize.height * scale)
         guard w > 0, h > 0 else { return }
+        // Pin the layer's contentsScale to the window's backingScaleFactor so the
+        // Core Animation compositor doesn't apply its own scale on top of ghostty's
+        // already-px-correct render. Without this, dragging the window between a
+        // Retina (2x) and non-Retina (1x) screen leaves the compositor scaling the
+        // CAMetalLayer asymmetrically; the next layout pass (e.g. the first scroll
+        // re-pinning terminalView frame) then renders into the upper-left quadrant.
+        // Wrap in CATransaction with disabled actions so the change doesn't animate.
+        // Mirrors upstream ghostty/macos SurfaceView_AppKit.viewDidChangeBackingProperties.
+        if let window {
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
+            layer?.contentsScale = window.backingScaleFactor
+            CATransaction.commit()
+        }
         ghostty_surface_set_size(s, w, h)
         ghostty_surface_set_content_scale(s, scale, scale)
     }
