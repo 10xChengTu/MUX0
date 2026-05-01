@@ -15,13 +15,19 @@ struct QuickActionRowView: View {
     let isBuiltin: Bool
 
     @Environment(\.locale) private var locale
+    // .contentShape 只影响 .onTapGesture 等手势的命中区，TextField 内部的
+    // mouse-down → 进入编辑态那条路径不归 contentShape 管，所以仅靠 shape
+    // 撑大命中区在 List 行里依然点不动 plain 样式的 padding 区域。用
+    // FocusState + onTapGesture 显式抢焦做兜底。
+    @FocusState private var nameFocused: Bool
+    @FocusState private var commandFocused: Bool
 
     var body: some View {
         HStack(spacing: 8) {
             QuickActionIconView(source: store.iconSource(for: id),
-                                size: 16,
+                                size: 13,
                                 color: Color(theme.textSecondary))
-                .frame(width: 24)
+                .frame(width: 17)
 
             if isBuiltin {
                 Text(store.displayName(for: id, locale: locale))
@@ -34,14 +40,21 @@ struct QuickActionRowView: View {
                 )
                 .themedTextField(theme)
                 .frame(width: 110)
+                .focused($nameFocused)
+                .contentShape(Rectangle())
+                .onTapGesture { nameFocused = true }
             }
 
             TextField(commandPlaceholder, text: commandBinding)
                 .themedTextField(theme)
                 .frame(maxWidth: .infinity)
+                .focused($commandFocused)
+                .contentShape(Rectangle())
+                .onTapGesture { commandFocused = true }
 
             Toggle("", isOn: enabledBinding)
                 .toggleStyle(.switch)
+                .controlSize(.mini)
                 .labelsHidden()
 
             if !isBuiltin {
