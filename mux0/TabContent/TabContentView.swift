@@ -478,7 +478,7 @@ final class TabContentView: NSView {
         return terminalViews[tab.focusedTerminalId]
     }
 
-    // MARK: - Key monitor for ⌘⌥arrow pane navigation
+    // MARK: - Key monitor (hidden shortcut aliases)
 
     private func installKeyMonitor() {
         // 处理两组 menu 不可见的 hidden duplicate 快捷键：
